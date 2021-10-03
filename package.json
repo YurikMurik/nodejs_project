@@ -19,6 +19,11 @@
     "typescript": "^4.4.3"
   },
   "devDependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
+    "@babel/node": "^7.15.4",
+    "@babel/preset-env": "^7.15.6",
+    "@types/csv2json": "^1.4.2",
     "nodemon": "^2.0.13",
     "prettier": "2.4.1",
     "ts-node": "^10.2.1"
