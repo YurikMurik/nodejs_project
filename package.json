@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "task1": "nodemon --exec babel-node ./src/task1.ts --extensions .ts",
-    "task2": "nodemon --exec babel-node ./src/task2.ts --extensions .ts"
+    "task2-1": "nodemon --exec babel-node ./src/module-2/task2-1.ts --extensions .ts",
+    "task2-2": "nodemon --exec babel-node ./src/task2.ts --extensions .ts"
   },
   "author": "",
   "license": "ISC",
