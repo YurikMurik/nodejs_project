@@ -1,17 +1,16 @@
 import express from "express";
-import nodeCache from "node-cache";
-import { User } from "./types";
+import { getStoreData, setDataToStore, store } from "./store";
+import { User, UserRequest } from "./types";
 import { isEqualsObjects } from "./utils";
 
 const app = express();
-const store = new nodeCache();
 
 app.listen(3000);
 app.use(express.json());
 
 app.get("/users", (req, res) => {
   const { id } = req.query;
-  const data: User = store.get(String(id));
+  const data: User = getStoreData(id as string);
 
   if (!id || !data || data.isDeleted === true) {
     res.status(404).send({
@@ -23,18 +22,18 @@ app.get("/users", (req, res) => {
 });
 
 app.post("/users/add", (req, res) => {
-  const { id, login, password } = req.body as User;
+  const { login, password } = req.body as UserRequest;
 
-  if (!id || !login || !password) {
+  if (!login || !password) {
     res.status(400).send({
       message: `Please check sending data: missing parameter(s)`,
     });
-  } else if (store.get(id)) {
+  } else if (store.find((e) => e.login === login)) {
     res.status(400).send({
-      message: `User with id=${id} is already exists`,
+      message: `User with login=${login} is already exists`,
     });
   } else {
-    store.set(id, req.body);
+    setDataToStore(req.body);
     res.send({
       message: "success",
     });
@@ -42,8 +41,8 @@ app.post("/users/add", (req, res) => {
 });
 
 app.post("/users/edit", (req, res) => {
-  const { id } = req.body as User;
-  const data: User = store.get(String(id));
+  const { id } = req.body;
+  const data: User = getStoreData(id);
 
   if (!id || !data) {
     res.status(400).send({
@@ -58,7 +57,7 @@ app.post("/users/edit", (req, res) => {
       ...data,
       ...req.body,
     };
-    store.set(id, newData);
+    setDataToStore(newData);
     res.send({
       message: "success",
     });
