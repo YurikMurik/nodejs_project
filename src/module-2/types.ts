@@ -6,4 +6,4 @@ export type User = {
   isDeleted: boolean;
 }
 
-export type UserRequest = Omit<User, "id">;
+export type UserRequest = Omit<User, 'id'>;
