@@ -1,4 +1,4 @@
-import { User, UserRequest } from "./types";
+import { User, UserRequest } from "../types";
 
 const store: Array<User> = [];
 let counter = 0;
@@ -14,10 +14,10 @@ const setDataToStore = (data: UserRequest) => {
   counter++;
 };
 
-const editDataStore = (data: UserRequest) => {
-  const { login } = data;
-  const ind = store.findIndex((e) => e.login === login);
-  // TODO: continue here
+const editDataStore = (data: User) => {
+  const { id } = data;
+  const ind = store.findIndex((e) => e.id === id);
+  store[ind] = data as User;
 };
 
-export { store, setDataToStore, getStoreData };
+export { store, setDataToStore, getStoreData, editDataStore };
