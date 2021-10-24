@@ -1,1 +1,0 @@
-export const TIME_TO_CLEAN_STORE = 600;
