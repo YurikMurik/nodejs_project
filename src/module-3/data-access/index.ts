@@ -1,17 +1,12 @@
-// import { DataTypes, Model, Sequelize } from "sequelize";
+import * as dotenv from "dotenv";
+import { Sequelize } from "sequelize";
 
-// class User extends Model {}
+dotenv.config();
 
-// const sequelize = new Sequelize('postgres://user:pass@example.com:5432/dbname');
+if (!process.env.DB_URL) {
+  process.exit(1);
+}
 
-// User.init(
-//   {
-//     username: DataTypes.STRING,
-//     birthday: DataTypes.DATE
-//   },
-//   { sequelize, modelName: "user" }
-// );
+const DB_URL = process.env.DB_URL;
 
-// const addUser = ({ login, password, age }: AddUserParams) => {
-
-// };
+export default new Sequelize(DB_URL);
