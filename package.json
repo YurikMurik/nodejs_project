@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "module-3": "nodemon --exec babel-node ./src/module-3/index.ts --extensions .ts",
+    "module-4": "nodemon --exec babel-node ./src/module-3/index.ts --extensions .ts",
     "lint": "eslint . --ext .ts"
   },
   "author": "",
