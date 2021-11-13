@@ -30,6 +30,6 @@ export interface Errors {
 }
 
 export interface UserGroupModel {
-  id: BaseUser["id"];
-  role: GroupModel["name"];
+  userId: BaseUser["id"];
+  groupId: GroupModel["id"];
 }

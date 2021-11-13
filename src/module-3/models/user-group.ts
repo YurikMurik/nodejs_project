@@ -5,11 +5,11 @@ import { UserGroupModel } from "../types";
 const UserGroup: ModelCtor<Model<UserGroupModel>> = db.define(
   "user-groups",
   {
-    id: {
+    groupId: {
       type: DataTypes.NUMBER
     },
-    role: {
-      type: DataTypes.STRING
+    userId: {
+      type: DataTypes.NUMBER
     }
   },
   {
