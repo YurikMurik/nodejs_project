@@ -1,4 +1,6 @@
 import express from "express";
+import groupsRouter from "./controllers/groups";
+import userGroupsRouter from "./controllers/user-groups";
 import usersRouter from "./controllers/users";
 import db from "./data-access";
 
@@ -13,6 +15,10 @@ app.listen(3000, () =>
       )
     )
     .then(() => app.use(express.json()))
-    .then(() => app.use("/api/users", usersRouter))
+    .then(() => {
+      app.use("/api/groups", groupsRouter);
+      app.use("/api/users", usersRouter);
+      app.use("/api/user-groups", userGroupsRouter);
+    })
     .catch((err) => console.error(err))
 );

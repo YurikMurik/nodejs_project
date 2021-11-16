@@ -1,5 +1,7 @@
-import { UserModel } from "../types";
+import sequelize from "../data-access";
 import User from "../models/user";
+import { UserModel } from "../types";
+import * as UserGroupsService from "./user-groups";
 
 export const getUsersList = async () =>
   User.findAll({
@@ -50,15 +52,32 @@ export const create = async (model: UserModel) => {
 };
 
 export const remove = async (id: string) => {
-  const user = await find(id);
+  const transaction = await sequelize.transaction();
 
-  if (!user) {
-    return null;
+  try {
+    const user = await find(id);
+    if (!user) {
+      transaction.rollback();
+      return null;
+    }
+
+    await UserGroupsService.remove(transaction, {
+      userId: id
+    });
+
+    await user.update(
+      {
+        isDeleted: true
+      },
+      {
+        transaction
+      }
+    );
+    await transaction.commit();
+  } catch (error) {
+    console.error(error);
+    transaction.rollback();
   }
-
-  return user.update({
-    isDeleted: true
-  });
 };
 
 export const update = async (id: string, model: UserModel) => {
