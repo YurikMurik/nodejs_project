@@ -6,10 +6,10 @@ const UserGroup: ModelCtor<Model<UserGroupModel>> = db.define(
   "user-groups",
   {
     groupId: {
-      type: DataTypes.NUMBER
+      type: DataTypes.STRING
     },
     userId: {
-      type: DataTypes.NUMBER
+      type: DataTypes.STRING
     }
   },
   {

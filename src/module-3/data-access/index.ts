@@ -9,4 +9,10 @@ if (!process.env.DB_URL) {
 
 const DB_URL = process.env.DB_URL;
 
-export default new Sequelize(DB_URL);
+export default new Sequelize(DB_URL, {
+  pool: {
+    max: 5,
+    min: 0,
+    idle: 10000
+  }
+});

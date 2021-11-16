@@ -1,7 +1,9 @@
+import { Transaction } from "sequelize/types";
 import sequelize from "../data-access";
 import UserGroup from "../models/user-group";
 import { UserGroupModel } from "../types";
 import { find as findGroupById } from "./groups";
+import { RemoveUserGroupParams } from "./types";
 import { find as findUserById } from "./users";
 
 export const findAll = async () => UserGroup.findAll();
@@ -54,12 +56,29 @@ export const addUsersToGroup = async (
   }
 };
 
-// export const remove = async (id: string) => {
-//   const group = await find(id);
+export const remove = async (
+  transaction: Transaction,
+  params: RemoveUserGroupParams
+) => {
+  const { userId, groupId } = params ?? {};
+  const id = userId ?? groupId;
 
-//   if (!group) {
-//     return null;
-//   }
+  if (!id) {
+    return;
+  }
 
-//   group.destroy();
-// };
+  const userGroups = await UserGroup.findAll({
+    where: {
+      ...(userId ? { userId: id } : undefined),
+      ...(groupId ? { groupId: id } : undefined)
+    }
+  });
+
+  if (!userGroups.length) {
+    return;
+  }
+
+  for (const userGroup of userGroups) {
+    await userGroup.destroy({ transaction });
+  }
+};
