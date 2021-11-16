@@ -1,5 +1,5 @@
-import { UserModel } from "../types";
 import User from "../models/user";
+import { UserModel } from "../types";
 
 export const getUsersList = async () =>
   User.findAll({
