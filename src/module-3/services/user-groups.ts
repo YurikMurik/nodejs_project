@@ -64,7 +64,7 @@ export const remove = async (
   const id = userId ?? groupId;
 
   if (!id) {
-    return;
+    return Promise.reject();
   }
 
   const userGroups = await UserGroup.findAll({
@@ -75,10 +75,12 @@ export const remove = async (
   });
 
   if (!userGroups.length) {
-    return;
+    return Promise.reject();
   }
 
   for (const userGroup of userGroups) {
     await userGroup.destroy({ transaction });
   }
+
+  return Promise.resolve();
 };

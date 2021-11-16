@@ -65,11 +65,15 @@ export const remove = async (id: string) => {
       userId: id
     });
 
+    await user.update(
+      {
+        isDeleted: true
+      },
+      {
+        transaction
+      }
+    );
     await transaction.commit();
-
-    return user.update({
-      isDeleted: true
-    });
   } catch (error) {
     console.error(error);
     transaction.rollback();

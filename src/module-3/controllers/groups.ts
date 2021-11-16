@@ -56,7 +56,7 @@ router.delete("/:id", async (req, res) => {
     const id = req.params.id;
     const isSuccess = await GroupsService.remove(id);
     if (isNull(isSuccess)) {
-      return res.status(404).send("Group with this name is not found");
+      return res.status(404).send("Something wrong");
     }
     res.redirect("/api/groups");
   } catch (e) {
