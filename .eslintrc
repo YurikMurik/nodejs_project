@@ -101,13 +101,13 @@
     "no-script-url": 2,
     "no-self-compare": 2,
     "no-sequences": 2,
-    "no-unused-expressions": [
-      2,
-      {
-        "allowShortCircuit": true,
-        "allowTernary": false
-      }
-    ],
+    // "no-unused-expressions": [
+    //   2,
+    //   {
+    //     "allowShortCircuit": true,
+    //     "allowTernary": false
+    //   }
+    // ],
     "no-useless-call": 2,
     "no-with": 2,
     "radix": 2,
@@ -139,7 +139,7 @@
     "no-shadow": 2,
     "no-undef-init": 2,
     "no-undef": 2,
-    "no-unused-vars": 2,
+    // "no-unused-vars": 2,
     "callback-return": 2,
     "no-mixed-requires": 2,
     "no-path-concat": 2,
