@@ -1,6 +1,6 @@
 import { Model } from "sequelize/types";
 import sequelize from "../data-access";
-import { bunyanLogger } from "../logger";
+import { bunyanLogger, LoggerStore } from "../logger";
 import Group from "../models/group";
 import { Errors, GroupModel } from "../types";
 import * as UserGroupsService from "./user-groups";

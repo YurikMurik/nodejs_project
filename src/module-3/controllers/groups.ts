@@ -1,6 +1,6 @@
-import express, { NextFunction, Request, Response } from "express";
+import express from "express";
 import { createValidator } from "express-joi-validation";
-import { bunyanLogger } from "../logger";
+import { logger } from "..";
 import * as GroupsService from "../services/groups";
 import { Errors, GroupModel } from "../types";
 import { isNull } from "./utils";
@@ -9,22 +9,12 @@ import groupValidationSchema from "./validation/groups";
 const validator = createValidator();
 const router = express.Router();
 
-const middleware = (req: Request, res: Response, next: NextFunction) => {
-  // console.log(req.trailers, res);
-  // res.on("finish", () => {
-  //   res.
-  // })
-  console.log("stack", req.route.stack);
-  next();
-  // args.next();
-  // next();
-};
-
 /* Get all groups */
 
 router.get("/", async (req, res) => {
   try {
     const groups = await GroupsService.findAll();
+    logger.setFnData(GroupsService.findAll.name);
     // groupsLogger.info("find groups");
     res.status(200).send(groups);
   } catch (e) {

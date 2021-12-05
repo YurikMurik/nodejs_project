@@ -1,12 +1,13 @@
 import express from "express";
-import morgan from "morgan";
 import groupsRouter from "./controllers/groups";
 import userGroupsRouter from "./controllers/user-groups";
 import usersRouter from "./controllers/users";
 import db from "./data-access";
-import { LoggerStream } from "./logger";
+import { LoggerStore } from "./logger";
 
 const app = express();
+
+export const logger = new LoggerStore();
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 // const logFuncion = (fnName: string, args: any[]) => {
@@ -20,8 +21,8 @@ const app = express();
 //   return req.headers.tk;
 // });
 
-// app.use(morgan("INFO: :something"));
-app.use(morgan("combined", { stream: new LoggerStream() }));
+// TODO: stay here
+app.use(logger.getFnData);
 
 app.listen(3000, () =>
   db

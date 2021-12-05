@@ -1,5 +1,4 @@
 import bunyan from "bunyan";
-import winston from "winston";
 
 // const logger = winston.createLogger({
 //   transports: [new winston.transports.Console()],
@@ -21,6 +20,17 @@ export const bunyanLogger = bunyan.createLogger({
 //   defaultMeta: { component: "groups" },
 //   transports: [new transports.Console()]
 // });
+export class LoggerStore {
+  private fnData = null;
+
+  getFnData() {
+    console.log(this.fnData);
+  }
+
+  setFnData(val: string, args?: any) {
+    this.fnData = `fn: ${val}, args: ${args}`;
+  }
+}
 
 export class LoggerStream {
   write(message: string) {
