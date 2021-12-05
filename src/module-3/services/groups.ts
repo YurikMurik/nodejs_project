@@ -1,4 +1,5 @@
 import { Model } from "sequelize/types";
+import { emitter } from "..";
 import sequelize from "../data-access";
 import Group from "../models/group";
 import { Errors, GroupModel } from "../types";
@@ -12,10 +13,12 @@ export const find = async (id: string) =>
     }
   });
 
-export const findAll = async () =>
-  Group.findAll({
+export const findAll = async () => {
+  emitter.emit("addFn", `${findAll.name}`);
+  return Group.findAll({
     raw: true
   });
+};
 
 export const create = async (model: GroupModel) => {
   const { name } = model;

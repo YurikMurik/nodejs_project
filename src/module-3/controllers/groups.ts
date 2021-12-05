@@ -1,4 +1,4 @@
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import { createValidator } from "express-joi-validation";
 import * as GroupsService from "../services/groups";
 import { Errors, GroupModel } from "../types";
@@ -8,6 +8,16 @@ import groupValidationSchema from "./validation/groups";
 const validator = createValidator();
 const router = express.Router();
 
+const middleware = (req: Request, res: Response, next: NextFunction) => {
+  // console.log(req.trailers, res);
+  // res.on("finish", () => {
+  //   res.
+  // })
+  console.log("stack", req.route.stack);
+  next();
+  // args.next();
+  // next();
+};
 /* Get all groups */
 
 router.get("/", async (req, res) => {
