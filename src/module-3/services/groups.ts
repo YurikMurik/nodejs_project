@@ -1,6 +1,6 @@
 import { Model } from "sequelize/types";
-import { emitter } from "..";
 import sequelize from "../data-access";
+import { bunyanLogger } from "../logger";
 import Group from "../models/group";
 import { Errors, GroupModel } from "../types";
 import * as UserGroupsService from "./user-groups";
@@ -14,7 +14,6 @@ export const find = async (id: string) =>
   });
 
 export const findAll = async () => {
-  emitter.emit("addFn", `${findAll.name}`);
   return Group.findAll({
     raw: true
   });
