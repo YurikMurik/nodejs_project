@@ -1,6 +1,6 @@
 import express from "express";
 import { createValidator } from "express-joi-validation";
-import { logger } from "../loggers";
+import { log, logger } from "../loggers";
 import * as GroupsService from "../services/groups";
 import { Errors, GroupModel } from "../types";
 import { isNull } from "./utils";
@@ -11,56 +11,38 @@ const router = express.Router();
 
 /* Get all groups */
 
-router.get(
-  "/",
-  (req, res, next) => {
-    logger.setFnData(GroupsService.findAll.name);
-    next();
-  },
-  async (req, res) => {
-    try {
-      const groups = await GroupsService.findAll();
-      res.status(200).send(groups);
-    } catch (e) {
-      logger.setError(e.message);
-      res.status(500).send(e.message);
-    }
+router.get("/", log(GroupsService.findAll), async (req, res) => {
+  try {
+    const groups = await GroupsService.findAll();
+    res.status(200).send(groups);
+  } catch (e) {
+    logger.setError(e.message);
+    res.status(500).send(e.message);
   }
-);
+});
 
 /* Find group by id */
 
-router.get(
-  "/:id",
-  (req, res, next) => {
-    logger.setFnData(GroupsService.find.name, { id: req.params.id });
-    next();
-  },
-  async (req, res) => {
-    try {
-      const id = req.params.id;
-      const group = await GroupsService.find(id);
-      if (group) {
-        return res.status(200).send(group);
-      }
-      const err = "Group not found";
-      logger.setError(err);
-      res.status(404).send(err);
-    } catch (e) {
-      res.status(500).send(e.message);
+router.get("/:id", log(GroupsService.find), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const group = await GroupsService.find(id);
+    if (group) {
+      return res.status(200).send(group);
     }
+    const err = "Group not found";
+    logger.setError(err);
+    res.status(404).send(err);
+  } catch (e) {
+    res.status(500).send(e.message);
   }
-);
+});
 
 /* Create new group */
 
 router.post(
   "/",
-  (req, res, next) => {
-    logger.setFnData(GroupsService.create.name, { body: req.body });
-    next();
-  },
-  validator.body(groupValidationSchema),
+  [log(GroupsService.create), validator.body(groupValidationSchema)],
   async (req, res) => {
     try {
       const body: GroupModel = req.body;
@@ -79,42 +61,26 @@ router.post(
 
 /* Delete group */
 
-router.delete(
-  "/:id",
-  (req, res, next) => {
-    logger.setFnData(GroupsService.remove.name, { id: req.params.id });
-    next();
-  },
-  async (req, res) => {
-    try {
-      const id = req.params.id;
-      const isSuccess = await GroupsService.remove(id);
-      if (isNull(isSuccess)) {
-        const err = "Something wrong";
-        logger.setError(err);
-        return res.status(404).send(err);
-      }
-      res.redirect("/api/groups");
-    } catch (e) {
-      res.status(500).send(e.message);
+router.delete("/:id", log(GroupsService.remove), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const isSuccess = await GroupsService.remove(id);
+    if (isNull(isSuccess)) {
+      const err = "Something wrong";
+      logger.setError(err);
+      return res.status(404).send(err);
     }
+    res.redirect("/api/groups");
+  } catch (e) {
+    res.status(500).send(e.message);
   }
-);
+});
 
 /* Update group */
 
 router.put(
   "/:id",
-  [
-    (req, res, next) => {
-      logger.setFnData(GroupsService.update.name, {
-        id: req.params.id,
-        body: req.body
-      });
-      next();
-    },
-    validator.body(groupValidationSchema)
-  ],
+  [log(GroupsService.update), validator.body(groupValidationSchema)],
   async ({ params: { id }, body }, res) => {
     try {
       const status = await GroupsService.update(id, body);

@@ -1,6 +1,6 @@
-import express, { Request } from "express";
+import express from "express";
 import { createValidator } from "express-joi-validation";
-import { logger } from "../loggers";
+import { log, logger } from "../loggers";
 import * as UsersService from "../services/users";
 import { UserModel } from "../types";
 import { isNull } from "./utils";
@@ -13,13 +13,7 @@ const router = express.Router();
 
 router.get(
   "/",
-  (req: Request, res, next) => {
-    logger.setFnData(UsersService.getAutoSuggestUsers.name, {
-      loginSubstring: req.body.loginSubstring,
-      limit: req.body.limit
-    });
-    next();
-  },
+  log(UsersService.getAutoSuggestUsers),
   async ({ body }, res) => {
     try {
       const users = await UsersService.getAutoSuggestUsers(
@@ -36,39 +30,26 @@ router.get(
 
 /* Find user by id */
 
-router.get(
-  "/:id",
-  (req, res, next) => {
-    logger.setFnData(UsersService.find.name, { id: req.params.id });
-    next();
-  },
-  async (req, res) => {
-    try {
-      const id = req.params.id;
-      const user = await UsersService.find(id);
-      if (user) {
-        return res.status(200).send(user);
-      }
-      const err = "User not found";
-      logger.setError(err);
-      res.status(404).send(err);
-    } catch (e) {
-      res.status(500).send(e.message);
+router.get("/:id", log(UsersService.find), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const user = await UsersService.find(id);
+    if (user) {
+      return res.status(200).send(user);
     }
+    const err = "User not found";
+    logger.setError(err);
+    res.status(404).send(err);
+  } catch (e) {
+    res.status(500).send(e.message);
   }
-);
+});
 
 /* Create user */
 
 router.post(
   "/",
-  [
-    (req: Request, res, next) => {
-      logger.setFnData(UsersService.create.name, { body: req.body });
-      next();
-    },
-    validator.body(userValidationSchema)
-  ],
+  [log(UsersService.create), validator.body(userValidationSchema)],
   async (req, res) => {
     try {
       const body: UserModel = req.body;
@@ -87,42 +68,26 @@ router.post(
 
 /* Delete user */
 
-router.delete(
-  "/:id",
-  (req: Request, res, next) => {
-    logger.setFnData(UsersService.remove.name, { id: req.params.id });
-    next();
-  },
-  async (req, res) => {
-    try {
-      const id = req.params.id;
-      const isSuccess = await UsersService.remove(id);
-      if (isNull(isSuccess)) {
-        const err = "User with this id is not found";
-        logger.setError(err);
-        return res.status(404).send(err);
-      }
-      res.redirect("/api/users");
-    } catch (e) {
-      res.status(500).send(e.message);
+router.delete("/:id", log(UsersService.remove), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const isSuccess = await UsersService.remove(id);
+    if (isNull(isSuccess)) {
+      const err = "User with this id is not found";
+      logger.setError(err);
+      return res.status(404).send(err);
     }
+    res.redirect("/api/users");
+  } catch (e) {
+    res.status(500).send(e.message);
   }
-);
+});
 
 /* Update user */
 
 router.put(
   "/:id",
-  [
-    (req: Request, res, next) => {
-      logger.setFnData(UsersService.update.name, {
-        id: req.params.id,
-        body: req.body
-      });
-      next();
-    },
-    validator.body(userValidationSchema)
-  ],
+  [log(UsersService.update), validator.body(userValidationSchema)],
   async (req, res) => {
     try {
       const id = req.params.id;

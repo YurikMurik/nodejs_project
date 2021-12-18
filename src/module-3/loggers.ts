@@ -10,6 +10,10 @@ export class LoggerStore {
   private error = null;
 
   getFnData() {
+    console.log("\n");
+    console.log("============================================");
+    console.log("\n");
+    console.log("Info of the executed function:");
     console.log({
       ...(this.fnName ? { fnName: this.fnName } : undefined),
       ...(this.fnArgs ? { fnArgs: this.fnArgs } : undefined),
@@ -17,9 +21,9 @@ export class LoggerStore {
     });
   }
 
-  setFnData(name: string, args?: any) {
+  setFnData(name: string, { body, params }: Request) {
     this.fnName = name;
-    this.fnArgs = args;
+    this.fnArgs = { ...body, ...params };
   }
 
   setError(message: any) {
@@ -73,4 +77,12 @@ export const initHandlers = () => {
   process.on("unhandledRejection", (error) => {
     console.log("unhandledRejection", error);
   });
+};
+
+export const log = (fn: (...params: any) => void) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    logger.setError(null);
+    logger.setFnData(fn.name, req);
+    next();
+  };
 };
