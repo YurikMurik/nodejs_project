@@ -1,3 +1,4 @@
+import cors from "cors";
 import express from "express";
 import authRouter from "./controllers/auth";
 import groupsRouter from "./controllers/groups";
@@ -10,6 +11,7 @@ const app = express();
 
 initHandlers();
 
+app.use(cors());
 app.use(errorsLogger);
 
 app.listen(3000, () =>
