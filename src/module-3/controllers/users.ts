@@ -1,6 +1,6 @@
 import express from "express";
 import { createValidator } from "express-joi-validation";
-import { log, logger } from "../loggers";
+import { log, logger } from "../middlewares/loggers";
 import * as UsersService from "../services/users";
 import { UserModel } from "../types";
 import { isNull } from "./utils";

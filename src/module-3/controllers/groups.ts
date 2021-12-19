@@ -1,6 +1,6 @@
 import express from "express";
 import { createValidator } from "express-joi-validation";
-import { log, logger } from "../loggers";
+import { log, logger } from "../middlewares/loggers";
 import * as GroupsService from "../services/groups";
 import { Errors, GroupModel } from "../types";
 import { isNull } from "./utils";

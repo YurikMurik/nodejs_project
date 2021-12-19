@@ -3,17 +3,13 @@ import groupsRouter from "./controllers/groups";
 import userGroupsRouter from "./controllers/user-groups";
 import usersRouter from "./controllers/users";
 import db from "./data-access";
-import {
-  errorLoggerMiddleware,
-  initHandlers,
-  mainLoggerMiddleware
-} from "./loggers";
+import { errorsLogger, initHandlers, mainLogger } from "./middlewares/loggers";
 
 const app = express();
 
 initHandlers();
 
-app.use(errorLoggerMiddleware);
+app.use(errorsLogger);
 
 app.listen(3000, () =>
   db
@@ -25,7 +21,7 @@ app.listen(3000, () =>
     )
     .then(() => app.use(express.json()))
     .then(() => {
-      app.use(mainLoggerMiddleware);
+      app.use(mainLogger);
       app.use("/api/groups", groupsRouter);
       app.use("/api/users", usersRouter);
       app.use("/api/user-groups", userGroupsRouter);

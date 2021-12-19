@@ -1,6 +1,6 @@
 import express from "express";
 import { createValidator } from "express-joi-validation";
-import { log, logger } from "../loggers";
+import { log, logger } from "../middlewares/loggers";
 import { AddUsersToGroupModel } from "../services/types";
 import * as UserGroupsService from "../services/user-groups";
 import userGroupValidationSchema from "./validation/user-groups";
