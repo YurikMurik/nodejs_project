@@ -48,14 +48,14 @@ const winstonLogger = winston.createLogger({
   exitOnError: false
 });
 
-export const errorLoggerMiddleware = morgan("tiny", {
+export const errorsLogger = morgan("tiny", {
   stream: {
     write: (message) => winstonLogger.error(message)
   },
   skip: (req, res) => res.statusCode !== 500
 });
 
-export const mainLoggerMiddleware = (
+export const mainLogger = (
   req: Request,
   res: Response,
   next: NextFunction

@@ -9,6 +9,15 @@ if (!process.env.DB_URL) {
 
 const DB_URL = process.env.DB_URL;
 
+export const tokenList = {};
+
+export const JWT_DATA = {
+  refreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET,
+  accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET,
+  refreshTokenExp: Number(process.env.JWT_REFRESH_TOKEN_EXP),
+  accessTokenExp: Number(process.env.JWT_ACCESS_TOKEN_EXP)
+};
+
 export default new Sequelize(DB_URL, {
   pool: {
     max: 5,

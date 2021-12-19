@@ -1,6 +1,7 @@
 import express from "express";
 import { createValidator } from "express-joi-validation";
-import { log, logger } from "../loggers";
+import { checkToken } from "../middlewares/auth";
+import { log, logger } from "../middlewares/loggers";
 import * as GroupsService from "../services/groups";
 import { Errors, GroupModel } from "../types";
 import { isNull } from "./utils";
@@ -11,7 +12,7 @@ const router = express.Router();
 
 /* Get all groups */
 
-router.get("/", log(GroupsService.findAll), async (req, res) => {
+router.get("/", [checkToken, log(GroupsService.findAll)], async (req, res) => {
   try {
     const groups = await GroupsService.findAll();
     res.status(200).send(groups);
@@ -23,7 +24,7 @@ router.get("/", log(GroupsService.findAll), async (req, res) => {
 
 /* Find group by id */
 
-router.get("/:id", log(GroupsService.find), async (req, res) => {
+router.get("/:id", [checkToken, log(GroupsService.find)], async (req, res) => {
   try {
     const id = req.params.id;
     const group = await GroupsService.find(id);
@@ -42,7 +43,11 @@ router.get("/:id", log(GroupsService.find), async (req, res) => {
 
 router.post(
   "/",
-  [log(GroupsService.create), validator.body(groupValidationSchema)],
+  [
+    log(GroupsService.create),
+    validator.body(groupValidationSchema),
+    checkToken
+  ],
   async (req, res) => {
     try {
       const body: GroupModel = req.body;
@@ -61,26 +66,34 @@ router.post(
 
 /* Delete group */
 
-router.delete("/:id", log(GroupsService.remove), async (req, res) => {
-  try {
-    const id = req.params.id;
-    const isSuccess = await GroupsService.remove(id);
-    if (isNull(isSuccess)) {
-      const err = "Something wrong";
-      logger.setError(err);
-      return res.status(404).send(err);
+router.delete(
+  "/:id",
+  [checkToken, log(GroupsService.remove)],
+  async (req, res) => {
+    try {
+      const id = req.params.id;
+      const isSuccess = await GroupsService.remove(id);
+      if (isNull(isSuccess)) {
+        const err = "Something wrong";
+        logger.setError(err);
+        return res.status(404).send(err);
+      }
+      res.redirect("/api/groups");
+    } catch (e) {
+      res.status(500).send(e.message);
     }
-    res.redirect("/api/groups");
-  } catch (e) {
-    res.status(500).send(e.message);
   }
-});
+);
 
 /* Update group */
 
 router.put(
   "/:id",
-  [log(GroupsService.update), validator.body(groupValidationSchema)],
+  [
+    log(GroupsService.update),
+    checkToken,
+    validator.body(groupValidationSchema)
+  ],
   async ({ params: { id }, body }, res) => {
     try {
       const status = await GroupsService.update(id, body);
