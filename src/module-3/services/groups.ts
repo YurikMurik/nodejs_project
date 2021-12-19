@@ -12,10 +12,11 @@ export const find = async (id: string) =>
     }
   });
 
-export const findAll = async () =>
-  Group.findAll({
+export const findAll = async () => {
+  return Group.findAll({
     raw: true
   });
+};
 
 export const create = async (model: GroupModel) => {
   const { name } = model;

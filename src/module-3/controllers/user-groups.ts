@@ -1,5 +1,6 @@
 import express from "express";
 import { createValidator } from "express-joi-validation";
+import { log, logger } from "../loggers";
 import { AddUsersToGroupModel } from "../services/types";
 import * as UserGroupsService from "../services/user-groups";
 import userGroupValidationSchema from "./validation/user-groups";
@@ -9,11 +10,12 @@ const router = express.Router();
 
 /* Get user-groups list */
 
-router.get("/", async (req, res) => {
+router.get("/", log(UserGroupsService.findAll), async (req, res) => {
   try {
     const userGroups = await UserGroupsService.findAll();
     res.status(200).send(userGroups);
   } catch (e) {
+    logger.setError(e);
     res.status(500).send(e.message);
   }
 });
@@ -22,13 +24,17 @@ router.get("/", async (req, res) => {
 
 router.post(
   "/",
-  validator.body(userGroupValidationSchema),
+  [
+    log(UserGroupsService.addUsersToGroup),
+    validator.body(userGroupValidationSchema)
+  ],
   async (req, res) => {
     try {
-      const body: AddUsersToGroupModel = req.body;
-      await UserGroupsService.addUsersToGroup(body.groupId, body.userIds);
+      const { groupId, userIds }: AddUsersToGroupModel = req.body;
+      await UserGroupsService.addUsersToGroup(groupId, userIds);
       res.redirect("/api/user-groups");
     } catch (e) {
+      logger.setError(e);
       res.status(500).send(e.message);
     }
   }
