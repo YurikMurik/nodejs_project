@@ -1,4 +1,5 @@
 import express from "express";
+import authRouter from "./controllers/auth";
 import groupsRouter from "./controllers/groups";
 import userGroupsRouter from "./controllers/user-groups";
 import usersRouter from "./controllers/users";
@@ -22,6 +23,7 @@ app.listen(3000, () =>
     .then(() => app.use(express.json()))
     .then(() => {
       app.use(mainLogger);
+      app.use("/api/login", authRouter);
       app.use("/api/groups", groupsRouter);
       app.use("/api/users", usersRouter);
       app.use("/api/user-groups", userGroupsRouter);

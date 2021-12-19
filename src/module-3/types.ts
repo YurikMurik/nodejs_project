@@ -12,6 +12,8 @@ export interface UserModel extends BaseUser {
   age: number;
 }
 
+export type UserAuthModel = Pick<UserModel, "login" | "password">;
+
 export type Permissions =
   | "READ"
   | "WRITE"
