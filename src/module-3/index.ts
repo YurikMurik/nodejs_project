@@ -23,7 +23,7 @@ app.listen(3000, () =>
     .then(() => app.use(express.json()))
     .then(() => {
       app.use(mainLogger);
-      app.use("/api/login", authRouter);
+      app.use("/api/auth", authRouter);
       app.use("/api/groups", groupsRouter);
       app.use("/api/users", usersRouter);
       app.use("/api/user-groups", userGroupsRouter);

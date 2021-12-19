@@ -9,7 +9,7 @@ const validator = createValidator();
 const router = express.Router();
 
 router.post(
-  "/",
+  "/login",
   [validator.body(authValidationSchema), log(AuthService.verify)],
   async (req: Request, res: Response) => {
     try {
@@ -30,5 +30,15 @@ router.post(
     }
   }
 );
+
+router.post("/token", async (req: Request, res: Response) => {
+  const data = req.body;
+
+  const token = await AuthService.refreshToken(data);
+  if (!token) {
+    return res.status(404).send("Invalid request");
+  }
+  res.status(200).json(token);
+});
 
 export default router;
