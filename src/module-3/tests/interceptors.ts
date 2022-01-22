@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import "jest";
 
+// TODO: should be deleted
 export const mockRequest = () => {
   const req = {} as Request;
   req.body = jest.fn().mockReturnValue(req);
