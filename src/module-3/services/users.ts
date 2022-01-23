@@ -15,10 +15,14 @@ export const getAutoSuggestUsers = async (subsrt?: string, limit = 3) => {
 
   if (subsrt && limit && users.length) {
     users = users
-      .filter((e) => e.getDataValue("login").indexOf(String(subsrt)) !== -1)
+      .filter(
+        (e) => (e as any)?.dataValues?.login.indexOf(String(subsrt)) !== -1
+      )
       .slice(0, limit)
       .sort((a, b) =>
-        a.getDataValue("login").localeCompare(b.getDataValue("login"))
+        (a as any)?.dataValues?.login.localeCompare(
+          (b as any)?.dataValues?.login
+        )
       );
   }
 

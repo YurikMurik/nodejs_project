@@ -3,7 +3,7 @@ import sequelize from "../data-access";
 import Group from "../models/group";
 import { Errors, GroupModel } from "../types";
 import * as UserGroupsService from "./user-groups";
-import { isEqualsObjects } from "./utils";
+import { areEqualsObjects } from "../utils";
 
 export const find = async (id: string) =>
   Group.findOne({
@@ -72,7 +72,7 @@ export const update = async (
     };
   }
 
-  if (isEqualsObjects(group.get(), model)) {
+  if (areEqualsObjects(group.get(), model)) {
     return {
       type: "error",
       message: "Input data is equal with exist data. Forbidden"
