@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const areEqualsObjects = (obj1: any, obj2: any) => {
+export const areEqualsObjects = (
+  obj1: Record<string, any>,
+  obj2: Record<string, any>
+) => {
   // Delete useless ids here
   /* eslint-disable @typescript-eslint/no-unused-vars */
   const { id: id1, ...anotherDataObj1 } = obj1;

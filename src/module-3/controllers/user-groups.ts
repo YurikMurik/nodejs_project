@@ -19,7 +19,7 @@ router.get(
       const userGroups = await UserGroupsService.findAll();
       res.status(200).send(userGroups);
     } catch (e) {
-      logger.setError(e);
+      logger?.setError(e);
       res.status(500).send(e.message);
     }
   }
@@ -40,7 +40,7 @@ router.post(
       await UserGroupsService.addUsersToGroup(groupId, userIds);
       res.redirect("/api/user-groups");
     } catch (e) {
-      logger.setError(e);
+      logger?.setError(e);
       res.status(500).send(e.message);
     }
   }

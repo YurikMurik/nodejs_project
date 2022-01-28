@@ -18,7 +18,7 @@ export const getUsersList = async ({ body }: Request, res: Response) => {
     );
     res.status(200).send(users);
   } catch (e) {
-    logger.setError(e);
+    logger?.setError(e);
     res.status(500).send(e.message);
   }
 };
@@ -27,11 +27,13 @@ export const getUserById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const user = await UsersService.find(id);
+    // console.log(UsersService.find);
+    console.log({ user });
     if (user) {
       return res.status(200).send(user);
     }
     const err = "User not found";
-    logger.setError(err);
+    logger?.setError(err);
     res.status(404).send(err);
   } catch (e) {
     res.status(500).send(e.message);
@@ -44,10 +46,10 @@ export const createNewUser = async (req: Request, res: Response) => {
     const isSuccess = await UsersService.create(body);
     if (!isSuccess) {
       const err = "User with this login is already exists";
-      logger.setError(err);
+      logger?.setError(err);
       return res.status(400).send(err);
     }
-    res.redirect("/api/users");
+    res.send(200).redirect("/api/users");
   } catch (e) {
     res.status(500).send(e.message);
   }
@@ -59,7 +61,7 @@ export const deleteUserById = async (req: Request, res: Response) => {
     const isSuccess = await UsersService.remove(id);
     if (isNull(isSuccess)) {
       const err = "User with this id is not found";
-      logger.setError(err);
+      logger?.setError(err);
       return res.status(404).send(err);
     }
     res.redirect("/api/users");
@@ -74,7 +76,7 @@ export const updateUserInfo = async (req: Request, res: Response) => {
     const isSuccess = await UsersService.update(id, req.body);
     if (!isSuccess) {
       const err = "User with this id is not found";
-      logger.setError(err);
+      logger?.setError(err);
       return res.status(404).send(err);
     }
     res.redirect("/api/users");

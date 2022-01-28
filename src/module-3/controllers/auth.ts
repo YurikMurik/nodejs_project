@@ -28,7 +28,7 @@ router.post(
 
       res.status(200).send(token);
     } catch (e) {
-      logger.setError(e);
+      logger?.setError(e);
       res.status(500).send(e.message);
     }
   }
@@ -47,7 +47,7 @@ router.post(
       }
       res.status(200).json(token);
     } catch (e) {
-      logger.setError(e);
+      logger?.setError(e);
     }
   }
 );

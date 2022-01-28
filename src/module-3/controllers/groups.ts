@@ -17,7 +17,7 @@ router.get("/", [checkToken, log(GroupsService.findAll)], async (req, res) => {
     const groups = await GroupsService.findAll();
     res.status(200).send(groups);
   } catch (e) {
-    logger.setError(e.message);
+    logger?.setError(e.message);
     res.status(500).send(e.message);
   }
 });
@@ -32,7 +32,7 @@ router.get("/:id", [checkToken, log(GroupsService.find)], async (req, res) => {
       return res.status(200).send(group);
     }
     const err = "Group not found";
-    logger.setError(err);
+    logger?.setError(err);
     res.status(404).send(err);
   } catch (e) {
     res.status(500).send(e.message);
@@ -54,7 +54,7 @@ router.post(
       const isSuccess = await GroupsService.create(body);
       if (!isSuccess) {
         const err = "Group with this name is already exists";
-        logger.setError(err);
+        logger?.setError(err);
         return res.status(400).send(err);
       }
       res.redirect("/api/groups");
@@ -75,7 +75,7 @@ router.delete(
       const isSuccess = await GroupsService.remove(id);
       if (isNull(isSuccess)) {
         const err = "Something wrong";
-        logger.setError(err);
+        logger?.setError(err);
         return res.status(404).send(err);
       }
       res.redirect("/api/groups");
@@ -98,7 +98,7 @@ router.put(
     try {
       const status = await GroupsService.update(id, body);
       if ((status as Errors).type === "error") {
-        logger.setError(status);
+        logger?.setError(status);
         return res.status(404).send((status as Errors).message);
       }
       res.redirect("/api/groups");

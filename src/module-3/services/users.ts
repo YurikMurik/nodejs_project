@@ -13,11 +13,9 @@ export const getUsersList = async () =>
 export const getAutoSuggestUsers = async (subsrt?: string, limit = 3) => {
   let users = await getUsersList();
 
-  if (subsrt && limit && users.length) {
+  if (subsrt && limit && users && users.length) {
     users = users
-      .filter(
-        (e) => (e as any)?.dataValues?.login.indexOf(String(subsrt)) !== -1
-      )
+      .filter((e) => (e as any)?.dataValues?.login.includes(subsrt))
       .slice(0, limit)
       .sort((a, b) =>
         (a as any)?.dataValues?.login.localeCompare(
@@ -39,11 +37,14 @@ export const find = async (id: string) =>
 
 export const create = async (model: UserModel) => {
   const { login } = model;
+  console.log({ login });
   const user = await User.findOne({
     where: {
       login
     }
   });
+
+  console.log({ user });
 
   if (user) {
     return null;
@@ -68,6 +69,8 @@ export const remove = async (id: string) => {
     await UserGroupsService.remove(transaction, {
       userId: id
     });
+
+    console.log({ user });
 
     await user.update(
       {

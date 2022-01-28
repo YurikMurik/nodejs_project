@@ -55,11 +55,7 @@ export const errorsLogger = morgan("tiny", {
   skip: (req, res) => res.statusCode !== 500
 });
 
-export const mainLogger = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+export const mainLogger = (req: Request, res: Response, next: NextFunction) => {
   req.once("close", () => {
     logger.getFnData();
   });
@@ -81,7 +77,7 @@ export const initHandlers = () => {
 
 export const log = (fn: (...params: any) => void) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    logger.setError(null);
+    logger?.setError(null);
     logger.setFnData(fn.name, req);
     next();
   };

@@ -55,4 +55,4 @@ export const mockedUsersData: Record<"dataValues", UserModel>[] = [
   }
 ];
 
-export const emptyUserData = null;
+export const emptyUserData = [];
