@@ -27,8 +27,6 @@ export const getUserById = async (req: Request, res: Response) => {
   try {
     const id = req.params.id;
     const user = await UsersService.find(id);
-    // console.log(UsersService.find);
-    console.log({ user });
     if (user) {
       return res.status(200).send(user);
     }
@@ -64,7 +62,7 @@ export const deleteUserById = async (req: Request, res: Response) => {
       logger?.setError(err);
       return res.status(404).send(err);
     }
-    res.redirect("/api/users");
+    res.send(200).redirect("/api/users");
   } catch (e) {
     res.status(500).send(e.message);
   }
@@ -79,7 +77,7 @@ export const updateUserInfo = async (req: Request, res: Response) => {
       logger?.setError(err);
       return res.status(404).send(err);
     }
-    res.redirect("/api/users");
+    res.send(200).redirect("/api/users");
   } catch (e) {
     res.status(500).send(e.message);
   }

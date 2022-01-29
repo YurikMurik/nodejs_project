@@ -37,14 +37,11 @@ export const find = async (id: string) =>
 
 export const create = async (model: UserModel) => {
   const { login } = model;
-  console.log({ login });
   const user = await User.findOne({
     where: {
       login
     }
   });
-
-  console.log({ user });
 
   if (user) {
     return null;
@@ -61,6 +58,7 @@ export const remove = async (id: string) => {
 
   try {
     const user = await find(id);
+
     if (!user) {
       transaction.rollback();
       return null;
@@ -70,14 +68,14 @@ export const remove = async (id: string) => {
       userId: id
     });
 
-    console.log({ user });
-
-    await user.update(
+    User.update(
       {
         isDeleted: true
       },
       {
-        transaction
+        where: {
+          id
+        }
       }
     );
     await transaction.commit();
@@ -95,9 +93,16 @@ export const update = async (id: string, model: UserModel) => {
     return null;
   }
 
-  return user.update({
-    login,
-    password,
-    age
-  });
+  User.update(
+    {
+      login,
+      password,
+      age
+    },
+    {
+      where: {
+        id
+      }
+    }
+  );
 };

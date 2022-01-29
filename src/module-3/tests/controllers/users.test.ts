@@ -2,9 +2,12 @@ import { getMockReq, getMockRes } from "@jest-mock/express";
 import sinon from "sinon";
 import {
   createNewUser,
+  deleteUserById,
   getUserById,
-  getUsersList
+  getUsersList,
+  updateUserInfo
 } from "../../controllers/users";
+import sequelize from "../../data-access/";
 // import * as UsersService from "../../services/users";
 import User from "../../models/user";
 import * as UserGroupsService from "../../services/user-groups";
@@ -12,28 +15,76 @@ import { UserModel } from "../../types";
 import { areEqualsObjects } from "../../utils";
 import { mockedUsersData } from "../mocks";
 
+type MockedData = Record<"dataValues", UserModel>[];
+
 describe("check users controller's methods", () => {
   const mockedReq = getMockReq();
   const mockedRes = getMockRes();
+
+  const stubs = {
+    callUserUpdate: (mockedData: MockedData) =>
+      sinon.stub(User, "update").callsFake((params, { where }) => {
+        const elemIndex = mockedData.findIndex(
+          (e) => e.dataValues.id === (where as any).id
+        );
+
+        if (!elemIndex && elemIndex !== 0) {
+          return;
+        }
+
+        const data = {
+          dataValues: {
+            ...mockedData[elemIndex].dataValues,
+            ...params
+          }
+        };
+
+        delete mockedData[elemIndex];
+        mockedData[elemIndex] = data;
+        return new Promise<any>((resolve) => resolve);
+      }),
+    callFindOne: (mockedData: MockedData) =>
+      sinon.stub(User, "findOne").callsFake(({ where }) => {
+        return mockedData.find(
+          (e) => e.dataValues.id === (where as any).id
+        ) as any;
+      }),
+    callCreate: (mockedData: MockedData) =>
+      sinon.stub(User, "create").callsFake((data: UserModel) => {
+        return mockedData.push({
+          dataValues: {
+            ...data,
+            isDeleted: false
+          }
+        }) as any;
+      })
+  };
+
+  beforeEach(() => {
+    sinon.stub(sequelize, "transaction").callsFake(() => {
+      return {
+        commit: () => {
+          return {};
+        },
+        rollback: () => {
+          return {};
+        }
+      } as any;
+    });
+  });
 
   afterEach(() => {
     mockedReq.params = {};
     mockedRes.clearMockRes();
     sinon.restore();
-    // sinon.stub
   });
 
-  xtest("getUserById method works correctly and returns data and 200 code", async (done) => {
+  test("getUserById method works correctly and returns data and 200 code", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
 
     req.params.id = "2";
-
-    sinon.stub(User, "findOne").callsFake(({ where }) => {
-      return mockedUsersData.find(
-        (e) => e.dataValues.id === (where as any).id
-      ) as any;
-    });
+    stubs.callFindOne(mockedUsersData);
 
     await getUserById(req, res);
 
@@ -48,25 +99,18 @@ describe("check users controller's methods", () => {
     done();
   });
 
-  xtest("getUserById method works correctly and returns empty data with 404 code", async (done) => {
+  test("getUserById method works correctly and returns empty data with 404 code", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
 
     req.params.id = "500";
 
-    sinon.stub(User, "findOne").callsFake(({ where }) => {
-      return mockedUsersData.find(
-        (e) => e.dataValues.id === (where as any).id
-      ) as any;
-    });
-
+    stubs.callFindOne(mockedUsersData);
     await getUserById(req, res);
 
     const resMock = (res.send as jest.Mock).mock;
     const statusCode = resMock.instances[0].status.mock.calls[0][0];
     const result = resMock.calls[0][0];
-
-    console.log({ result });
 
     expect(res.send).toHaveBeenCalledTimes(1);
     expect(statusCode).toBe(404);
@@ -75,7 +119,7 @@ describe("check users controller's methods", () => {
     done();
   });
 
-  xtest("getUsersList method works correctly and return data with code 200", async (done) => {
+  test("getUsersList method works correctly and return data with code 200", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
     const loginSubstring = "first";
@@ -108,7 +152,7 @@ describe("check users controller's methods", () => {
     done();
   });
 
-  xtest("getUsersList method works correctly and return empty data with code 200", async (done) => {
+  test("getUsersList method works correctly and return empty data with code 200", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
     const loginSubstring = "random-name";
@@ -148,14 +192,7 @@ describe("check users controller's methods", () => {
     };
 
     sinon.stub(User, "findOne").resolves(null);
-    sinon.stub(User, "create").callsFake((data: UserModel) => {
-      return mockedData.push({
-        dataValues: {
-          ...data,
-          isDeleted: false
-        }
-      }) as any;
-    });
+    stubs.callCreate(mockedData);
 
     await createNewUser(req, res);
 
@@ -167,21 +204,47 @@ describe("check users controller's methods", () => {
     done();
   });
 
-  test("createNewUser method works correctly and add a new user", async (done) => {
+  test("deleteUserById method works correctly and delete the user", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
     const mockedData = [...mockedUsersData];
 
     req.params.id = "1";
 
-    sinon.stub(User, "findOne").callsFake(({ where }) => {
-      return mockedData.find(
-        (e) => e.dataValues.id === (where as any).id
-      ) as any;
-    });
-
+    stubs.callUserUpdate(mockedData);
+    stubs.callFindOne(mockedData);
     sinon.stub(UserGroupsService, "remove").resolves();
 
-    // TODO: continue here
+    await deleteUserById(req, res);
+
+    expect(res.send).toHaveBeenCalledTimes(1);
+    expect(mockedData[0].dataValues.isDeleted).toBe(true); // id = "1";
+    expect(mockedData.length).toEqual(mockedUsersData.length);
+    done();
+  });
+
+  test("updateUserInfo method works correctly and update the required user", async (done) => {
+    const req = mockedReq;
+    const res = mockedRes.res;
+    const mockedData = [...mockedUsersData];
+
+    req.params.id = "4";
+
+    req.body = {
+      login: "updated-login-data",
+      password: "updated-pass",
+      age: 44
+    };
+
+    stubs.callUserUpdate(mockedData);
+    stubs.callFindOne(mockedData);
+
+    await updateUserInfo(req, res);
+
+    expect(res.send).toHaveBeenCalledTimes(1);
+    expect(mockedData[3].dataValues.login).toEqual("updated-login-data"); // id = "4";
+    expect(mockedData[3].dataValues.age).toEqual(44);
+    expect(mockedData.length).toEqual(mockedUsersData.length);
+    done();
   });
 });
