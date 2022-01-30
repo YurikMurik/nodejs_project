@@ -2,8 +2,8 @@ import { Model } from "sequelize/types";
 import sequelize from "../data-access";
 import Group from "../models/group";
 import { Errors, GroupModel } from "../types";
-import * as UserGroupsService from "./user-groups";
 import { areEqualsObjects } from "../utils";
+import * as UserGroupsService from "./user-groups";
 
 export const find = async (id: string) =>
   Group.findOne({
@@ -50,7 +50,13 @@ export const remove = async (id: string) => {
       groupId: id
     });
 
-    await group.destroy({ transaction });
+    await Group.destroy({
+      where: {
+        id
+      },
+      transaction
+    });
+
     await transaction.commit();
   } catch (error) {
     console.error(error);
@@ -72,15 +78,24 @@ export const update = async (
     };
   }
 
-  if (areEqualsObjects(group.get(), model)) {
+  if (areEqualsObjects((group as any).dataValues, model)) {
     return {
       type: "error",
       message: "Input data is equal with exist data. Forbidden"
     };
   }
 
-  return group.update({
-    name,
-    permissions
-  });
+  Group.update(
+    {
+      name,
+      permissions
+    },
+    {
+      where: {
+        id
+      }
+    }
+  );
+
+  return group;
 };

@@ -22,6 +22,8 @@ describe("check users controller's methods", () => {
   const mockedRes = getMockRes();
 
   const stubs = {
+    callFindAll: () =>
+      sinon.stub(User, "findAll").resolves(mockedUsersData as any),
     callUserUpdate: (mockedData: MockedData) =>
       sinon.stub(User, "update").callsFake((params, { where }) => {
         const elemIndex = mockedData.findIndex(
@@ -124,7 +126,7 @@ describe("check users controller's methods", () => {
     const res = mockedRes.res;
     const loginSubstring = "first";
 
-    sinon.stub(User, "findAll").resolves(mockedUsersData as any);
+    stubs.callFindAll();
 
     // should return 2 entity with login which contains 'first' substr
     req.body = {
@@ -157,7 +159,7 @@ describe("check users controller's methods", () => {
     const res = mockedRes.res;
     const loginSubstring = "random-name";
 
-    sinon.stub(User, "findAll").resolves(mockedUsersData as any);
+    stubs.callFindAll();
 
     // should return 2 entity with login which contains 'first' substr
     req.body = {
@@ -196,7 +198,7 @@ describe("check users controller's methods", () => {
 
     await createNewUser(req, res);
 
-    expect(res.send).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledTimes(1);
     expect(mockedData.some((e) => e.dataValues.login === "new-user")).toBe(
       true
     );
@@ -217,7 +219,7 @@ describe("check users controller's methods", () => {
 
     await deleteUserById(req, res);
 
-    expect(res.send).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledTimes(1);
     expect(mockedData[0].dataValues.isDeleted).toBe(true); // id = "1";
     expect(mockedData.length).toEqual(mockedUsersData.length);
     done();
@@ -241,7 +243,7 @@ describe("check users controller's methods", () => {
 
     await updateUserInfo(req, res);
 
-    expect(res.send).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledTimes(1);
     expect(mockedData[3].dataValues.login).toEqual("updated-login-data"); // id = "4";
     expect(mockedData[3].dataValues.age).toEqual(44);
     expect(mockedData.length).toEqual(mockedUsersData.length);

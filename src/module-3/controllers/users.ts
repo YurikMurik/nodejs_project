@@ -47,7 +47,7 @@ export const createNewUser = async (req: Request, res: Response) => {
       logger?.setError(err);
       return res.status(400).send(err);
     }
-    res.send(200).redirect("/api/users");
+    res.status(200).redirect("/api/users");
   } catch (e) {
     res.status(500).send(e.message);
   }
@@ -62,7 +62,7 @@ export const deleteUserById = async (req: Request, res: Response) => {
       logger?.setError(err);
       return res.status(404).send(err);
     }
-    res.send(200).redirect("/api/users");
+    res.status(200).redirect("/api/users");
   } catch (e) {
     res.status(500).send(e.message);
   }
@@ -77,7 +77,7 @@ export const updateUserInfo = async (req: Request, res: Response) => {
       logger?.setError(err);
       return res.status(404).send(err);
     }
-    res.send(200).redirect("/api/users");
+    res.status(200).redirect("/api/users");
   } catch (e) {
     res.status(500).send(e.message);
   }

@@ -1,4 +1,4 @@
-import { UserModel } from "../types";
+import { GroupModel, UserModel } from "../types";
 
 export const mockedUserData: Record<"dataValues", UserModel> = {
   dataValues: {
@@ -9,6 +9,38 @@ export const mockedUserData: Record<"dataValues", UserModel> = {
     isDeleted: false
   }
 };
+
+export const mockedGroupData: Record<"dataValues", GroupModel> = {
+  dataValues: {
+    id: "9999",
+    name: "mocked-group-data",
+    permissions: ["DELETE", "READ", "SHARE", "UPLOAD_FILES", "WRITE"]
+  }
+};
+
+export const mockedGroupsData: Record<"dataValues", GroupModel>[] = [
+  {
+    dataValues: {
+      ...mockedGroupData.dataValues,
+      id: "1",
+      name: "first-mocked-group-data"
+    }
+  },
+  {
+    dataValues: {
+      ...mockedGroupData.dataValues,
+      id: "2",
+      name: "second-mocked-group-data"
+    }
+  },
+  {
+    dataValues: {
+      ...mockedGroupData.dataValues,
+      id: "3",
+      name: "third-mocked-group-data"
+    }
+  }
+];
 
 export const mockedUsersData: Record<"dataValues", UserModel>[] = [
   {
@@ -54,5 +86,3 @@ export const mockedUsersData: Record<"dataValues", UserModel>[] = [
     }
   }
 ];
-
-export const emptyUserData = [];
