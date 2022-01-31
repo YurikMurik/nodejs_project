@@ -11,7 +11,6 @@ import sequelize from "../../data-access/";
 import Group from "../../models/group";
 import * as UserGroupsService from "../../services/user-groups";
 import { GroupModel } from "../../types";
-import * as utils from "../../utils";
 import { areEqualsObjects } from "../../utils";
 import { mockedGroupsData } from "../mocks";
 
@@ -44,8 +43,6 @@ describe("check groups controller's methods", () => {
         delete mockedData[elemIndex];
         mockedData[elemIndex] = data;
 
-        console.log(mockedData[2]);
-
         return new Promise<any>((resolve) => resolve);
       }),
     callFindOne: (mockedData: MockedData) =>
@@ -71,7 +68,6 @@ describe("check groups controller's methods", () => {
         );
         mockedData.splice(itemIndex, 1);
         return null as any;
-        // return new Promise<any>((resolve) => resolve);
       })
   };
 
@@ -94,7 +90,7 @@ describe("check groups controller's methods", () => {
     sinon.restore();
   });
 
-  xtest("getGroupsList method works correctly and returns data and 200 code", async (done) => {
+  test("getGroupsList method works correctly and returns data and 200 code", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
 
@@ -118,7 +114,7 @@ describe("check groups controller's methods", () => {
     done();
   });
 
-  xtest("getGroupById method works correctly and returns data and 200 code", async (done) => {
+  test("getGroupById method works correctly and returns data and 200 code", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
 
@@ -139,7 +135,7 @@ describe("check groups controller's methods", () => {
     done();
   });
 
-  xtest("createNewGroup method works correctly and add a new group", async (done) => {
+  test("createNewGroup method works correctly and add a new group", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
     const mockedData = [...mockedGroupsData];
@@ -161,7 +157,7 @@ describe("check groups controller's methods", () => {
     done();
   });
 
-  xtest("deleteGroupById method works correctly and delete the group", async (done) => {
+  test("deleteGroupById method works correctly and delete the group", async (done) => {
     const req = mockedReq;
     const res = mockedRes.res;
     const mockedData = [...mockedGroupsData];
@@ -197,18 +193,14 @@ describe("check groups controller's methods", () => {
     stubs.callGroupUpdate(mockedData);
     stubs.callFindOne(mockedData);
 
-    sinon.stub(utils, "areEqualsObjects").resolves(false);
-
     await updateGroup(req, res);
-
-    // TODO: continue here
-    console.log(mockedData[2]);
 
     done();
 
-    // expect(res.send).toHaveBeenCalledTimes(1);
-    // expect(mockedData[3].dataValues.login).toEqual("updated-login-data"); // id = "4";
-    // expect(mockedData[3].dataValues.age).toEqual(44);
-    // expect(mockedData.length).toEqual(mockedUsersData.length);
+    expect(res.status).toHaveBeenCalledTimes(1);
+    expect(mockedData[2].dataValues.name).toEqual("updated-name-group-data"); // id = "3";
+    expect(mockedData[2].dataValues.permissions.toString()).not.toEqual(
+      mockedGroupsData[2].dataValues.permissions.toString()
+    );
   });
 });

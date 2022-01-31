@@ -9,5 +9,6 @@ export const areEqualsObjects = (
   const { id: id2, ...anotherDataObj2 } = obj2;
   /* eslint-enable */
 
+
   return JSON.stringify(anotherDataObj1) === JSON.stringify(anotherDataObj2);
 };
